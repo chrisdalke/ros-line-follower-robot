@@ -1,9 +1,16 @@
 import {Card} from '@blueprintjs/core';
 import CardHeading from '../../ui/CardHeading/CardHeading';
 import './MotionControlCard.scss';
-import {useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
+import RobotContext from '../../context/RobotContext/RobotContext';
+import {useThrottleFn} from 'react-use';
+import moment from 'moment';
 
 function MotionControlCard() {
+    const {
+        sendMessage
+    } = useContext(RobotContext);
+
     const returnToCenter = useState(true);
     const containerRef = useRef(null);
 
@@ -55,6 +62,20 @@ function MotionControlCard() {
             computeSpeedDirection(event);
         }
     };
+    const throttledValue = useThrottleFn(draggingState => {
+        if (isDragging.current) {
+            sendMessage({
+                timestamp: moment().valueOf(),
+                key: "speed",
+                value: `${draggingState.speed}`
+            });
+            sendMessage({
+                timestamp: moment().valueOf(),
+                key: "dir",
+                value: `${draggingState.dir}`
+            });
+        }
+    }, 50, [draggingState]);
 
     const onMouseUp = (event) => {
         if (isDragging.current) {
@@ -64,6 +85,16 @@ function MotionControlCard() {
                     dragging: false,
                     speed: 0,
                     dir: 0
+                });
+                sendMessage({
+                    timestamp: moment().valueOf(),
+                    key: "speed",
+                    value: "0"
+                });
+                sendMessage({
+                    timestamp: moment().valueOf(),
+                    key: "dir",
+                    value: "0"
                 });
             } else {
                 setDraggingState({

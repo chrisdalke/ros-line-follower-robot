@@ -1,0 +1,37 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
+.OfflineOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba($dark-gray3, 0.5);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba($dark-gray1, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  & > * {
+    margin-bottom: 5px;
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: row;
+    .bp3-spinner {
+      margin-left: 5px;
+    }
+  }
+}
