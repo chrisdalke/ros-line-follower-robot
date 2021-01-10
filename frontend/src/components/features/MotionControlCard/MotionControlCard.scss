@@ -1,5 +1,21 @@
 @import '~@blueprintjs/core/lib/scss/variables';
 
+.MotionControlCard {
+  background-color: $dark-gray2;
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+  b {
+    font-weight: 600;
+  }
+
+  .bp3-switch {
+    margin-top: 5px;
+  }
+  .bp3-button {
+    margin-top: 5px;
+  }
+}
 .MotionControlContainer {
   width: 250px;
   height: 250px;
@@ -7,6 +23,7 @@
   position: relative;
   z-index: 0;
   overflow: hidden;
+  margin-right: 20px;
 
   &__handle {
     position: absolute;

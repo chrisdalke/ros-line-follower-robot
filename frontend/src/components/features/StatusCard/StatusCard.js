@@ -14,7 +14,7 @@ function StatusCard() {
     return (<Card>
         <CardHeading title="Link Status" />
         <div className="StatusCard">
-            <Tag minimal intent={online ? Intent.SUCCESS : Intent.DANGER}>Socket Link Status: {online ? 'Online' : 'Offline'}</Tag>
+            <Tag minimal intent={online ? Intent.SUCCESS : Intent.DANGER}>Socket Link Status: {online ? 'Online' : 'Offline'}</Tag><br />
             <Tag minimal>Packets Broadcast: {numMessagesBroadcast}</Tag>
             <Tag minimal>Packets Received: {numMessagesReceived}</Tag>
         </div>

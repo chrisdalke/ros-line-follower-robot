@@ -1,0 +1,38 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
+.MotorOutputCard {
+
+  &__outputChannel {
+    background-color: $dark-gray2;
+
+
+    &__label {
+      padding: 10px;
+      font-weight: 600;
+      padding-bottom: 0px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    &__value {
+      font-family: monospace;
+      font-weight: 600;
+      text-align: left;
+      font-size: 10px;
+      color: $gray5;
+      opacity: 0.8;
+      margin-top: 8px;
+      padding-left: 10px;
+      padding-bottom: 6px;
+    }
+
+    .bp3-progress-bar {
+      margin-top: 5px;
+      border-radius: 0px;
+    }
+    .bp3-progress-meter {
+      border-radius: 0px;
+    }
+  }
+}

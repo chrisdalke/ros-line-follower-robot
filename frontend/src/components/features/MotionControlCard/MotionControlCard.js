@@ -1,4 +1,4 @@
-import {Card} from '@blueprintjs/core';
+import {Button, Card, Switch} from '@blueprintjs/core';
 import CardHeading from '../../ui/CardHeading/CardHeading';
 import './MotionControlCard.scss';
 import {useContext, useEffect, useRef, useState} from 'react';
@@ -11,7 +11,8 @@ function MotionControlCard() {
         sendMessage
     } = useContext(RobotContext);
 
-    const returnToCenter = useState(true);
+    const returnToCenterMode = useRef(true);
+    const [returnToCenter, setReturnToCenter] = useState(true);
     const containerRef = useRef(null);
 
     const size = 250;
@@ -22,6 +23,25 @@ function MotionControlCard() {
         speed: 0,
         dir: 0
     });
+
+    const clearMotion = () => {
+        isDragging.current = false;
+        setDraggingState({
+            dragging: false,
+            speed: 0,
+            dir: 0
+        });
+        sendMessage({
+            timestamp: moment().valueOf(),
+            key: "speed",
+            value: "0"
+        });
+        sendMessage({
+            timestamp: moment().valueOf(),
+            key: "dir",
+            value: "0"
+        });
+    }
 
     const computeSpeedDirection = (event) => {
         const bounds = containerRef.current.getBoundingClientRect();
@@ -52,9 +72,9 @@ function MotionControlCard() {
         if (event.target !== containerRef.current) {
             return;
         }
+        computeSpeedDirection(event);
 
         isDragging.current = true;
-        computeSpeedDirection(event);
     };
 
     const onMouseMove = (event) => {
@@ -80,27 +100,13 @@ function MotionControlCard() {
     const onMouseUp = (event) => {
         if (isDragging.current) {
             isDragging.current = false;
-            if (returnToCenter) {
-                setDraggingState({
-                    dragging: false,
-                    speed: 0,
-                    dir: 0
-                });
-                sendMessage({
-                    timestamp: moment().valueOf(),
-                    key: "speed",
-                    value: "0"
-                });
-                sendMessage({
-                    timestamp: moment().valueOf(),
-                    key: "dir",
-                    value: "0"
-                });
+            if (returnToCenterMode.current) {
+                clearMotion();
             } else {
-                setDraggingState({
+                setDraggingState((s) => ({
                     dragging: false,
-                    ...draggingState
-                });
+                    ...s
+                }));
             }
         }
     };
@@ -132,6 +138,7 @@ function MotionControlCard() {
 
     return (<Card>
         <CardHeading title="Motion Control" />
+        <div className="MotionControlCard">
         <div ref={containerRef} className="MotionControlContainer">
             <div className="MotionControlContainer__circle" />
             <div className="MotionControlContainer__handle" style={handleStyle} />
@@ -142,6 +149,18 @@ function MotionControlCard() {
                 speed: {draggingState.speed.toFixed(3)}<br/>
                 dir: {draggingState.dir.toFixed(2)}<br/>
             </div>
+        </div>
+        <div>
+        <b>Motion Settings</b><br />
+        <Switch checked={returnToCenter} label="Return to Center" onChange={(event) => {
+            returnToCenterMode.current = !returnToCenter;
+            setReturnToCenter(returnToCenterMode.current);
+            if (returnToCenterMode.current) {
+                clearMotion();
+            }
+        }} />
+        <Button disabled={returnToCenter} small onClick={clearMotion}>Clear</Button>
+        </div>
         </div>
     </Card>)
 }
