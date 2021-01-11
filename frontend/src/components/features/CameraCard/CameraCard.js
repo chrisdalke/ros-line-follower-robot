@@ -9,6 +9,7 @@ function CameraCard() {
             <div className="CameraCard__noSignal">
                 No Signal
             </div>
+            <img src={`http://${window.location.hostname}:8081/`} />
         </div>
     </Card>)
 }

@@ -1,9 +1,16 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
 .CameraCard {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  min-height: 360px;
+  position: relative;
+  background-color: $dark-gray2;
+  pointer-events: none;
+  z-index: 0;
 
   &__noSignal {
     min-height: 300px;
@@ -11,10 +18,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    background-color: rgba($dark-gray2,0.5);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
   }
   img {
     object-fit: contain;
     width: 100%;
     height: 360px;
+    pointer-events: none;
+    z-index: 5;
   }
 }

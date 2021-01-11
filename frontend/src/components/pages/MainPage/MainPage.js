@@ -48,7 +48,6 @@ function MainPage() {
                   </div>
                   <div className="col-xs-12 col-md-5">
                       <StatusCard />
-                      <OdometryCard />
                       <MotorOutputCard />
                   </div>
               </div>
