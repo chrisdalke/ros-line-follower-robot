@@ -12,62 +12,36 @@ likely will not work in a different lighting environment. The perception system 
 ## Architecture
 
 ```
-
-   ┌─────────────────────────────────────────┐   ┌─────────────────────────────────────────────────────────────────┐
-   │                                         │   │                                                                 │
-   │   ROBOT HARDWARE                        │   │   ROS NODES                                                     │
-   │                                         │   │                                                                 │
-   │   ┌──────────────┐                      │   │   ┌────────────────────────┐             ┌──────────────────┐   │
-   │   │              │   Raw                │   │   │                        │  Processed  │                  │   │
-   │   │ Raspberry Pi │   Image              │   │   │ Image Preparation      │  Image      │  Line Detection  │   │
-   │   │    Camera    ├──────────────────────┼───┼───► Threshold,             ├─────────────►  Path Planning   │   │
-   │   │              │                      │   │   │ Perspective-Correction │             │                  │   │
-   │   └──────────────┘                      │   │   │                        │             │                  │   │
-   │                                         │   │   └────────────────────────┘             └─────────┬────────┘   │
-   │                                         │   │                                                    │            │
-   │   ┌──────────────┐                      │   │   ┌────────────────────────┐                       │            │
-   │   │              │  Speed/Heading       │   │   │                        │  Speed/Heading        │            │
-   │   │ Arduino Pro  │  Command             │   │   │  Serial Communication  │  Command              │            │
-   │   │ Micro        ◄──────────────────────┼───┼───┤  Node                  ◄───────────────────────┘            │
-   │   │              │                      │   │   │                        │                                    │
-   │   └──────┬───────┘                      │   │   └────────────────────────┘                                    │
-   │          │                              │   │                                                                 │
-   │   Motor  │                              │   └─────────────────────────────────────────────────────────────────┘
-   │   Commands                              │
-   │          │            ┌──────────────┐  │
-   │   ┌──────▼───────┐    │              │  │
-   │   │              ├────► Left Motor   │  │
-   │   │              │    │              │  │
-   │   │ Dual Motor   │    └──────────────┘  │
-   │   │ Controller   │                      │
-   │   │              │    ┌──────────────┐  │
-   │   │              ├────►              │  │
-   │   └──────────────┘    │ Right Motor  │  │
-   │                       │              │  │
-   │                       └──────────────┘  │
-   │                                         │
-   └─────────────────────────────────────────┘
+┌────────────────────────────────┐ ┌─────────────────────────────────────────────────────────┐
+│ ROBOT HARDWARE                 │ │ ROS NODES                                               │
+│ ┌──────────────┐ Raw           │ │ ┌────────────────────────┐ Processed ┌────────────────┐ │
+│ │ Raspberry Pi │ Image         │ │ │ Image Preparation      │ Image     │ Line Detection │ │
+│ │    Camera    ├───────────────┼─┼─► Threshold,             ├───────────► Path Planning  │ │
+│ └──────────────┘               │ │ │ Perspective-Correction │           └───────┬────────┘ │
+│                                │ │ └────────────────────────┘                   │          │
+│ ┌──────────────┐ Speed/Heading │ │                                              │          │
+│ │ Arduino Pro  │ Command       │ │ ┌────────────────────────┐  Speed/Heading    │          │
+│ │ Micro        ◄───────────────┼─┼─┤ Serial Communication   │  Command          │          │
+│ └──────┬───────┘               │ │ │ Node                   ◄───────────────────┘          │
+│        │ Motor                 │ │ └────────────────────────┘                              │
+│        │ Command               │ │                                                         │
+│ ┌──────▼─────────────────┐     │ └─────────────────────────────────────────────────────────┘
+│ │       Dual Motor       │     │
+│ │       Controller       │     │
+│ └─────┬────────────┬─────┘     │
+│       │            │           │
+│ ┌─────▼────┐ ┌─────▼─────┐     │
+│ │Left Motor│ │Right Motor│     │
+│ └──────────┘ └───────────┘     │
+│                                │
+└────────────────────────────────┘
 ```
+The robot architecture is a unidirectional pipeline. First, sensor data is fed from the Raspberry Pi camera, and through image processing which performs a perspective correction and contrast/threshold image adjustment to facilitate line detection.
 
+Once the image is processed, a line detection algorithm is run to find the approximate direction of the line to follow.
+The code uses the relative position and angle of the line to compute a target speed/heading that will track the line.
 
-1. Raspberry Pi Camera
-
-An image is taken in from a Raspberry Pi Camera mounted on the robot.
-
-2. Perspective Correction
-
-The robot has a fixed camera angle and distance off the ground, and assumes
-that the ground is flat. These limitations allow the software to perform a 
-fixed perspective correction on the input image. This assists in detecting and following the lines in later steps.
-
-3. Hough Transform
-
-The image is passed through a Hough Transform filter, which generates a list of lines that were detected in the image. An algorithm groups the lines by angle, and
-assigns relative weights based on the line length and number of detections.
-
-4. Path Planning
-
-
+The control data is sent over a serial connection to an Arduino Pro Micro, which computes individual motor commands and commands a dual motor controller.
 
 ## Development Notes
 
