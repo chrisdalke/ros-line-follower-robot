@@ -1,7 +1,14 @@
 <launch>
+    <rosparam ns="rate" file="$(find line_follower)/config/rate_config.yaml" />
+
     <group ns="line_follower">
         <rosparam file="$(find line_follower)/config/line_follower_config.yaml" />
         <node name="line_follower_node" pkg="line_follower" type="line_follower_node.py" output="screen" />
+    </group>
+
+    <group ns="motor_driver">
+        <rosparam file="$(find line_follower)/config/motor_driver_config.yaml" />
+        <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" args="/dev/ttyACM0" />
     </group>
 
     <group ns="camera">

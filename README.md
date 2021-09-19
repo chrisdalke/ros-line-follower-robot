@@ -51,6 +51,7 @@ To run this project, you must have a ROS Noetic installation setup on a Raspberr
 You must also have the following dependencies installed: 
 - Python 3 (`sudo apt install python3.8`)
 - OpenCV (`pip install opencv-python && sudo apt install python3-pip`)
+- PySerial (`pip install pyserial`)
 - rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
 - robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
 - raspicam_node (See https://github.com/UbiquityRobotics/raspicam_node for build/install instructions)
