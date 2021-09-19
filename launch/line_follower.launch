@@ -1,7 +1,11 @@
 <launch>
     <group ns="line_follower">
-    <rosparam file="$(find line_follower)/config/line_follower_config.yaml" />
+        <rosparam file="$(find line_follower)/config/line_follower_config.yaml" />
         <node name="line_follower_node" pkg="line_follower" type="line_follower_node.py" output="screen" />
-        <node name="serial" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" />
+    </group>
+
+    <group ns="camera">
+        <rosparam file="$(find line_follower)/config/rpi_camera_config.yaml" />
+        <include file="$(find raspicam_node)/launch/camerav2_1280x960.launch" />
     </group>
 </launch>

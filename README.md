@@ -32,22 +32,23 @@ assigns relative weights based on the line length and number of detections.
 
 ## Development Workflow
 
+### Remote ROS
+
+To connect to the remote ROS instance, set the following environment variables:
+```
+export ROS_MASTER_URI=http://linefollower:11311
+export ROS_IP=linefollower
+```
+
 ### Prerequisites
 To run this project, you must have a ROS Noetic installation setup on a Raspberry Pi. This repository should be checked out into a Catkin workspace. For more information, see the [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials).
 
 You must also have the following dependencies installed: 
-- Python 3
-- OpenCV
-- rosserial_python
-- robot_upstart
-
-These can be installed with:
-```
-sudo apt install python3.8
-sudo apt install python3-pip
-sudo apt install ros-noetic-rosserial-python
-pip install opencv-python
-```
+- Python 3 (`sudo apt install python3.8`)
+- OpenCV (`pip install opencv-python && sudo apt install python3-pip`)
+- rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
+- robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
+- raspicam_node (See https://github.com/UbiquityRobotics/raspicam_node for build/install instructions)
 
 ### Starting the Project
 To run the entire project, use the roslaunch file in this repository:
