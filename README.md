@@ -11,6 +11,45 @@ likely will not work in a different lighting environment. The perception system 
 
 ## Architecture
 
+```
+
+   ┌─────────────────────────────────────────┐   ┌─────────────────────────────────────────────────────────────────┐
+   │                                         │   │                                                                 │
+   │   ROBOT HARDWARE                        │   │   ROS NODES                                                     │
+   │                                         │   │                                                                 │
+   │   ┌──────────────┐                      │   │   ┌────────────────────────┐             ┌──────────────────┐   │
+   │   │              │   Raw                │   │   │                        │  Processed  │                  │   │
+   │   │ Raspberry Pi │   Image              │   │   │ Image Preparation      │  Image      │  Line Detection  │   │
+   │   │    Camera    ├──────────────────────┼───┼───► Threshold,             ├─────────────►  Path Planning   │   │
+   │   │              │                      │   │   │ Perspective-Correction │             │                  │   │
+   │   └──────────────┘                      │   │   │                        │             │                  │   │
+   │                                         │   │   └────────────────────────┘             └─────────┬────────┘   │
+   │                                         │   │                                                    │            │
+   │   ┌──────────────┐                      │   │   ┌────────────────────────┐                       │            │
+   │   │              │  Speed/Heading       │   │   │                        │  Speed/Heading        │            │
+   │   │ Arduino Pro  │  Command             │   │   │  Serial Communication  │  Command              │            │
+   │   │ Micro        ◄──────────────────────┼───┼───┤  Node                  ◄───────────────────────┘            │
+   │   │              │                      │   │   │                        │                                    │
+   │   └──────┬───────┘                      │   │   └────────────────────────┘                                    │
+   │          │                              │   │                                                                 │
+   │   Motor  │                              │   └─────────────────────────────────────────────────────────────────┘
+   │   Commands                              │
+   │          │            ┌──────────────┐  │
+   │   ┌──────▼───────┐    │              │  │
+   │   │              ├────► Left Motor   │  │
+   │   │              │    │              │  │
+   │   │ Dual Motor   │    └──────────────┘  │
+   │   │ Controller   │                      │
+   │   │              │    ┌──────────────┐  │
+   │   │              ├────►              │  │
+   │   └──────────────┘    │ Right Motor  │  │
+   │                       │              │  │
+   │                       └──────────────┘  │
+   │                                         │
+   └─────────────────────────────────────────┘
+```
+
+
 1. Raspberry Pi Camera
 
 An image is taken in from a Raspberry Pi Camera mounted on the robot.
@@ -30,15 +69,7 @@ assigns relative weights based on the line length and number of detections.
 
 
 
-## Development Workflow
-
-### Remote ROS
-
-To connect to the remote ROS instance, set the following environment variables:
-```
-export ROS_MASTER_URI=http://linefollower:11311
-export ROS_IP=linefollower
-```
+## Development Notes
 
 ### Prerequisites
 To run this project, you must have a ROS Noetic installation setup on a Raspberry Pi. This repository should be checked out into a Catkin workspace. For more information, see the [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials).
@@ -54,21 +85,42 @@ You must also have the following dependencies installed:
 To run the entire project, use the roslaunch file in this repository:
 `roslaunch line_follower line_follower.launch`
 
+### Remote ROS
+
+To connect to the remote ROS instance, set the following environment variables:
+```
+export ROS_MASTER_URI=http://linefollower:11311
+export ROS_IP=linefollower
+```
+
+Start the visualization:
+```
+rosrun rviz rviz -d ~/linefollower/catkin_ws/src/ros-line-follower-robot/rviz/line_follower.rviz
+```
+
 ### Starting/Stopping the Background Service
 
 The entire stack can be launched in the background using `robot_upstart`.
 
 To install the background service:
 ```
-rosrun robot_upstart install line_follower/launch/line_follower.launch
+rosrun 
+    robot_upstart install 
+    --job linefollower
+    --setup /home/ubuntu/catkin_ws/devel/setup.sh
+    --logdir /var/log/upstart
+    --symlink line_follower/launch/line_follower.launch
+sudo systemctl daemon-reload
 ```
 
 To start the background service:
 ```
-sudo service line_follower start
+sudo systemctl enable linefollower
+sudo systemctl start linefollower
 ```
 
 To stop the background service:
 ```
-sudo service line_follower stop
+sudo systemctl stop linefollower
+sudo systemctl disable linefollower
 ```
