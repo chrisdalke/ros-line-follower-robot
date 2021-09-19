@@ -1,3 +1,4 @@
-framerate: 10
-enable_raw: true
-enable_imv: true
+raspicam_node:
+  framerate: 10
+  enable_raw: true
+  enable_imv: true
