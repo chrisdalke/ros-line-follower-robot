@@ -1,3 +1,0 @@
-Sources for Raspberry Pi 3 (B/B+), Pi 2 B, and Pi 1 B+ case with VESA mounts and more
-
-Raspberry Pi (Model B) case with 75mm VESA mount (https://www.thingiverse.com/thing:608169)

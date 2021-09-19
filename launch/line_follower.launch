@@ -1,0 +1,14 @@
+<launch>
+    <rosparam ns="rate" file="$(find pongrobot_actuation)/config/rate_config.yaml" />
+
+    <group ns="launcher">
+        <rosparam file="$(find pongrobot_actuation)/config/launcher_config.yaml" />
+
+        <node name="trajectory_manager_node" pkg="pongrobot_actuation" type="trajectory_manager_node" output="screen" />
+        
+        <node name="vesc_node" pkg="pongrobot_actuation" type="vesc_node.py" output="screen" args="/dev/ttyACM0 /dev/ttyACM1" />
+        <node name="serial" pkg="rosserial_python" type="serial_node.py" args="/dev/brobot_launcher" />
+
+        <node type="rviz" name="rviz" pkg="rviz" args="-d $(find pongrobot_actuation)/rviz/trajectory_visualizer.rviz" />
+    </group>
+</launch>
