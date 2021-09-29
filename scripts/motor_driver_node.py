@@ -5,7 +5,6 @@ from std_msgs.msg import Empty
 from enum import Enum
 import math
 import serial
-import pyvesc
 import sys
 
 class MotorDriver:
