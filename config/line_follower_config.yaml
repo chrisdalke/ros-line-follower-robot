@@ -1,2 +1,0 @@
-# Node rate config
-lineFollower: 10.0 # rate to run the LineFollower node (hz)

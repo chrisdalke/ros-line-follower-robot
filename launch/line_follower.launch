@@ -1,4 +1,6 @@
 <launch>
+    <rosparam ns="rate" file="$(find line_follower)/config/rate_config.yaml" />
+
     <group ns="line_follower">
         <rosparam file="$(find line_follower)/config/line_follower_config.yaml" />
         <node name="line_follower_node" pkg="line_follower" type="line_follower_node.py" output="screen" />

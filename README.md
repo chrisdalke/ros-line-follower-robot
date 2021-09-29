@@ -11,26 +11,54 @@ likely will not work in a different lighting environment. The perception system 
 
 ## Architecture
 
-1. Raspberry Pi Camera
+```
+┌────────────────────────────────┐ ┌─────────────────────────────────────────────────────────┐
+│ ROBOT HARDWARE                 │ │ ROS NODES                                               │
+│ ┌──────────────┐ Raw           │ │ ┌────────────────────────┐ Processed ┌────────────────┐ │
+│ │ Raspberry Pi │ Image         │ │ │ Image Preparation      │ Image     │ Line Detection │ │
+│ │    Camera    ├───────────────┼─┼─► Threshold,             ├───────────► Path Planning  │ │
+│ └──────────────┘               │ │ │ Perspective-Correction │           └───────┬────────┘ │
+│                                │ │ └────────────────────────┘                   │          │
+│ ┌──────────────┐ Speed/Heading │ │                                              │          │
+│ │ Arduino Pro  │ Command       │ │ ┌────────────────────────┐  Speed/Heading    │          │
+│ │ Micro        ◄───────────────┼─┼─┤ Serial Communication   │  Command          │          │
+│ └──────┬───────┘               │ │ │ Node                   ◄───────────────────┘          │
+│        │ Motor                 │ │ └────────────────────────┘                              │
+│        │ Command               │ │                                                         │
+│ ┌──────▼─────────────────┐     │ └─────────────────────────────────────────────────────────┘
+│ │       Dual Motor       │     │
+│ │       Controller       │     │
+│ └─────┬────────────┬─────┘     │
+│       │            │           │
+│ ┌─────▼────┐ ┌─────▼─────┐     │
+│ │Left Motor│ │Right Motor│     │
+│ └──────────┘ └───────────┘     │
+│                                │
+└────────────────────────────────┘
+```
+The robot architecture is a unidirectional pipeline. First, sensor data is fed from the Raspberry Pi camera, and through image processing which performs a perspective correction and contrast/threshold image adjustment to facilitate line detection.
 
-An image is taken in from a Raspberry Pi Camera mounted on the robot.
+Once the image is processed, a line detection algorithm is run to find the approximate direction of the line to follow.
+The code uses the relative position and angle of the line to compute a target speed/heading that will track the line.
 
-2. Perspective Correction
+The control data is sent over a serial connection to an Arduino Pro Micro, which computes individual motor commands and commands a dual motor controller.
 
-The robot has a fixed camera angle and distance off the ground, and assumes
-that the ground is flat. These limitations allow the software to perform a 
-fixed perspective correction on the input image. This assists in detecting and following the lines in later steps.
+## Development Notes
 
-3. Hough Transform
+### Prerequisites
+To run this project, you must have a ROS Noetic installation setup on a Raspberry Pi. This repository should be checked out into a Catkin workspace. For more information, see the [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials).
 
-The image is passed through a Hough Transform filter, which generates a list of lines that were detected in the image. An algorithm groups the lines by angle, and
-assigns relative weights based on the line length and number of detections.
+You must also have the following dependencies installed: 
+- Python 3 (`sudo apt install python3.8`)
+- OpenCV (`pip install opencv-python && sudo apt install python3-pip`)
+- PySerial (`pip install pyserial`)
+- rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
+- robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
+- raspicam_node (See https://github.com/UbiquityRobotics/raspicam_node for build/install instructions)
 
-4. Path Planning
-
-
-
-## Development Workflow
+### Starting the Project
+To run the entire project, use the roslaunch file in this repository:
+`roslaunch line_follower line_follower.launch`
 
 ### Remote ROS
 
@@ -40,19 +68,10 @@ export ROS_MASTER_URI=http://linefollower:11311
 export ROS_IP=linefollower
 ```
 
-### Prerequisites
-To run this project, you must have a ROS Noetic installation setup on a Raspberry Pi. This repository should be checked out into a Catkin workspace. For more information, see the [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials).
-
-You must also have the following dependencies installed: 
-- Python 3 (`sudo apt install python3.8`)
-- OpenCV (`pip install opencv-python && sudo apt install python3-pip`)
-- rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
-- robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
-- raspicam_node (See https://github.com/UbiquityRobotics/raspicam_node for build/install instructions)
-
-### Starting the Project
-To run the entire project, use the roslaunch file in this repository:
-`roslaunch line_follower line_follower.launch`
+Start the visualization:
+```
+rosrun rviz rviz -d ~/linefollower/catkin_ws/src/ros-line-follower-robot/rviz/line_follower.rviz
+```
 
 ### Starting/Stopping the Background Service
 
@@ -60,16 +79,24 @@ The entire stack can be launched in the background using `robot_upstart`.
 
 To install the background service:
 ```
-rosrun robot_upstart install line_follower/launch/line_follower.launch
+rosrun 
+    robot_upstart install 
+    --job linefollower
+    --setup /home/ubuntu/catkin_ws/devel/setup.sh
+    --logdir /var/log/upstart
+    --symlink line_follower/launch/line_follower.launch
+sudo systemctl daemon-reload
 ```
 
 To start the background service:
 ```
-sudo service line_follower start
+sudo systemctl enable linefollower
+sudo systemctl start linefollower
 ```
 
 To stop the background service:
 ```
+<<<<<<< HEAD
 sudo service line_follower stop
 ```
 
@@ -77,3 +104,8 @@ sudo service line_follower stop
 
 - `/camera/raspicam_node/image`: An image from the Raspberry Pi camera.
 - `/camera/processed`: The processed image: threshold, reverse perspective transform.
+=======
+sudo systemctl stop linefollower
+sudo systemctl disable linefollower
+```
+>>>>>>> cc8ffab764fbfeb8d76171e1c27646bf583204ca
