@@ -24,7 +24,7 @@ void setup() {
   pinMode(rightMotorEnablePin, OUTPUT);
   pinMode(rightMotorDirPin1, OUTPUT);
   pinMode(rightMotorDirPin2, OUTPUT);
-  //Serial.begin(115200);
+  Serial.begin(115200);
 }
 
 // Write -1 -> 1 as a motor speed
@@ -80,33 +80,24 @@ void loop() {
         
   float leftSpeed = 0.0;
   float rightSpeed = 0.0;
-  if (targetDirection >= 0 && targetDirection < 90) {
-    tempDirRad = (targetDirection * 71.0) / 4068.0;
-    leftSpeed = cos(tempDirRad * 2.0);
+
+  // Speed and direction should both be [-1, 1]
+  // Speed: full backwards to full forwards
+  // Direction: full turn left, center, full turn right
+  float dirAngleRad = ((targetDirection * 90.0) * 71.0) / 4068.0;
+  if (dirAngleRad < 0) {
+    leftSpeed = cos(dirAngleRad * 2.0);
     rightSpeed = 1.0;
-  }
-  if (targetDirection >= 90 && targetDirection < 180) {
-    tempDirRad = ((targetDirection - 90.0) * 71.0) / 4068.0;
-    leftSpeed = -1.0;
-    rightSpeed = cos(tempDirRad * 2.0);
-  }
-  if (targetDirection >= 180 && targetDirection < 270) {
-    tempDirRad = ((targetDirection - 90.0) * 71.0) / 4068;
-    leftSpeed = cos(tempDirRad * 2.0);
-    rightSpeed = -1.0;
-    
-  }
-  if (targetDirection >= 270 && targetDirection < 360) {
-    tempDirRad = ((targetDirection) * 71.0) / 4068.0;
+  } else {
     leftSpeed = 1.0;
-    rightSpeed = cos(tempDirRad * 2.0);
+    rightSpeed = cos(dirAngleRad * 2.0);
   }
+  Serial.print(leftSpeed);
+  Serial.print(" ");
+  Serial.println(rightSpeed);
+  
   leftSpeed *= targetSpeed;
   rightSpeed *= targetSpeed;
-  Serial.print("mleft=");
-  Serial.println(leftSpeed);
-  Serial.print("mright=");
-  Serial.println(rightSpeed);
   writeLeftMotor(leftSpeed);
   writeRightMotor(rightSpeed * -1.0);
 
