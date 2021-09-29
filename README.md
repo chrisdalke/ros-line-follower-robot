@@ -19,8 +19,8 @@ likely will not work in a different lighting environment. The perception system 
 │ │    Camera    ├───────────────┼─┼─► Threshold,             ├───────────► Path Planning  │ │
 │ └──────────────┘               │ │ │ Perspective-Correction │           └───────┬────────┘ │
 │                                │ │ └────────────────────────┘                   │          │
-│ ┌──────────────┐ Speed/Heading │ │                                              │          │
-│ │ Arduino Pro  │ Command       │ │ ┌────────────────────────┐  Speed/Heading    │          │
+│ ┌──────────────┐ Speed/Angle   │ │                                              │          │
+│ │ Arduino Pro  │ Command       │ │ ┌────────────────────────┐  Speed/Angle      │          │
 │ │ Micro        ◄───────────────┼─┼─┤ Serial Communication   │  Command          │          │
 │ └──────┬───────┘               │ │ │ Node                   ◄───────────────────┘          │
 │        │ Motor                 │ │ └────────────────────────┘                              │
@@ -39,7 +39,7 @@ likely will not work in a different lighting environment. The perception system 
 The robot architecture is a unidirectional pipeline. First, sensor data is fed from the Raspberry Pi camera, and through image processing which performs a perspective correction and contrast/threshold image adjustment to facilitate line detection.
 
 Once the image is processed, a line detection algorithm is run to find the approximate direction of the line to follow.
-The code uses the relative position and angle of the line to compute a target speed/heading that will track the line.
+The code uses the relative position and angle of the line to compute a target speed/angle that will track the line.
 
 The control data is sent over a serial connection to an Arduino Pro Micro, which computes individual motor commands and commands a dual motor controller.
 
@@ -103,4 +103,6 @@ sudo systemctl disable linefollower
 ### Topics
 
 - `/camera/raspicam_node/image`: An image from the Raspberry Pi camera.
-- `/camera/processed`: The processed image: threshold, reverse perspective transform.
+- `/line_follower/processed_image`: The processed image: threshold, reverse perspective transform.
+- `/command/speed`: A commanded speed for the Arduino to achieve.
+- `/command/direction`: A commanded direction for the Arduino to achieve.

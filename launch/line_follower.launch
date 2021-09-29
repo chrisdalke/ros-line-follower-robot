@@ -8,7 +8,7 @@
 
     <group ns="motor_driver">
         <rosparam file="$(find line_follower)/config/motor_driver_config.yaml" />
-        <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" />
+        <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" args="/dev/ttyACM0" />
     </group>
 
     <group ns="camera">

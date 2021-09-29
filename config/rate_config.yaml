@@ -1,0 +1,3 @@
+# Node rate config
+lineFollower: 10.0 # rate to run the Line Follower node (hz)
+motorDriver: 10.0 # rate to run the Motor Driver node (hz)

@@ -1,16 +1,6 @@
 import rospy
 import sys
-import serial
-
-# Motor driver node
-# Forwards motor messages over a serial connection
-
-# Takes in a speed/direction command
-
-
-# TODO: If the node receives a speed or a heading command,
-# directly send this value to the robot hardware over the serial connection.
-
+import Serial
 
 class MotorDriver:
     def __init__(self, port):
@@ -25,7 +15,7 @@ class MotorDriver:
         self.timed_out = False
         self.last_command_time = rospy.get_rostime()
         self.speed_sub = rospy.Subscriber('speed', Float32, self.speed_callback)
-        self.dir_sub = rospy.Subscriber('dir', Float32, self.dir_callback)
+        self.dir_sub = rospy.Subscriber('direction', Float32, self.dir_callback)
 
     def open_port(self):
         try:
