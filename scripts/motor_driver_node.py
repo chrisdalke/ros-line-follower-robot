@@ -19,15 +19,15 @@ class MotorDriver:
         self.has_command = True
         self.timed_out = False
         self.last_command_time = rospy.get_rostime()
-        self.speed_sub = rospy.Subscriber('speed', Float32, self.speed_callback)
-        self.dir_sub = rospy.Subscriber('direction', Float32, self.dir_callback)
+        self.speed_sub = rospy.Subscriber('/motor_driver/speed', Float32, self.speed_callback)
+        self.dir_sub = rospy.Subscriber('/motor_driver/direction', Float32, self.dir_callback)
 
     def open_port(self):
         try:
             self.port = serial.Serial(self.port_name)
             self.port_open = True
         except:
-            rospy.logerr('Unable to open port:' + self.port1_name) 
+            rospy.logerr('Unable to open port:' + self.port1_name)
             self.port_open = False
 
     def speed_callback(self, msg):
@@ -35,21 +35,23 @@ class MotorDriver:
         self.last_command_time = rospy.get_rostime()
         self.has_command = True
         self.timed_out = False
-        rospy.logdebug('Received SPEED_COMMAND = ' + str(self.speed_command))
+        print('Received SPEED_COMMAND = ' + str(self.speed_command))
 
     def dir_callback(self, msg):
         self.dir_command = msg.data
         self.last_command_time = rospy.get_rostime()
         self.has_command = True
         self.timed_out = False
-        rospy.logdebug('Received DIR_COMMAND = ' + str(self.dir_command))
+        print('Received DIR_COMMAND = ' + str(self.dir_command))
     
     def send_command(self):
         if self.port_open:
-            self.port.write('wss.speed=' + str(self.speed_command))
-            self.port.write('wss.dir=' + str(self.dir_command))
-            rospy.logdebug('Sending SPEED_COMMAND = ' + str(self.speed_command))
-            rospy.logdebug('Sending DIR_COMMAND = ' + str(self.dir_command))
+            speedStr = 'wss.speed=' + str(self.speed_command)
+            dirStr = 'wss.dir=' + str(self.dir_command)
+            self.port.write(speedStr.encode())
+            self.port.write(dirStr.encode())
+            print('Sending SPEED_COMMAND = ' + str(self.speed_command))
+            print('Sending DIR_COMMAND = ' + str(self.dir_command))
 
     def run(self):
         while not rospy.is_shutdown():
@@ -58,9 +60,9 @@ class MotorDriver:
                 self.open_port()
 
             # Check timeout 
-            if (rospy.get_rostime() - self.last_command_time).to_sec() > self.command_timeout:
+            if (rospy.get_rostime() - self.last_command_time).to_sec() > self.timeout:
                 if not self.timed_out:
-                    rospy.logdebug('No command received, stopping robot.')
+                    print('No command received, stopping robot.')
                     self.speed_command = 0
                     self.dir_command = 0
                     self.has_command = True
