@@ -96,16 +96,11 @@ sudo systemctl start linefollower
 
 To stop the background service:
 ```
-<<<<<<< HEAD
-sudo service line_follower stop
+sudo systemctl stop linefollower
+sudo systemctl disable linefollower
 ```
 
 ### Topics
 
 - `/camera/raspicam_node/image`: An image from the Raspberry Pi camera.
 - `/camera/processed`: The processed image: threshold, reverse perspective transform.
-=======
-sudo systemctl stop linefollower
-sudo systemctl disable linefollower
-```
->>>>>>> cc8ffab764fbfeb8d76171e1c27646bf583204ca
