@@ -27,7 +27,7 @@ class MotorDriver:
             self.port = serial.Serial(self.port_name)
             self.port_open = True
         except:
-            rospy.logerr('Unable to open port:' + self.port1_name)
+            rospy.logerr('Unable to open port:' + self.port_name)
             self.port_open = False
 
     def speed_callback(self, msg):
