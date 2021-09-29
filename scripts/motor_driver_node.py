@@ -77,7 +77,7 @@ if __name__ =='__main__':
     myargv = rospy.myargv(argv=sys.argv)
 
     if len(myargv) >= 1:
-        line_follower = LineFollower(sys.argv[1])
-        line_follower.run()
+        motor_driver = MotorDriver(sys.argv[1])
+        motor_driver.run()
     else:
         print("Invalid number of args")
