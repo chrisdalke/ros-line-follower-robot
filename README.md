@@ -72,3 +72,8 @@ To stop the background service:
 ```
 sudo service line_follower stop
 ```
+
+### Topics
+
+- `/camera/raspicam_node/image`: An image from the Raspberry Pi camera.
+- `/camera/processed`: The processed image: threshold, reverse perspective transform.

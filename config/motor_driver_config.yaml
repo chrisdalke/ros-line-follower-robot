@@ -1,0 +1,2 @@
+# Node rate config
+motorDriver: 10.0 # rate to run the Motor Driver node (hz)

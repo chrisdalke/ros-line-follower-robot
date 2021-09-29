@@ -13,9 +13,5 @@ class LineFollower:
 if __name__ =='__main__':
     rospy.init_node('line_follower')
     myargv = rospy.myargv(argv=sys.argv)
-
-    if len(myargv) >= 2:
-        line_follower = LineFollower(sys.argv[1], sys.argv[2])
-        line_follower.run()
-    else:
-        print("Invalid number of args")
+    line_follower = LineFollower()
+    line_follower.run()

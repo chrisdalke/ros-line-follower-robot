@@ -4,8 +4,13 @@
         <node name="line_follower_node" pkg="line_follower" type="line_follower_node.py" output="screen" />
     </group>
 
+    <group ns="motor_driver">
+        <rosparam file="$(find line_follower)/config/motor_driver_config.yaml" />
+        <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" />
+    </group>
+
     <group ns="camera">
-        <include file="$(find raspicam_node)/launch/camerav2_1280x960.launch" />
+        <include file="$(find raspicam_node)/launch/camerav2_410x308_30fps.launch" />
         <rosparam file="$(find line_follower)/config/rpi_camera_config.yaml" />
     </group>
 </launch>
