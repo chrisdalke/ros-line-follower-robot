@@ -1,0 +1,24 @@
+<launch>
+    <rosparam ns="rate" file="$(find line_follower)/config/rate_config.yaml" />
+
+    <group ns="line_detector">
+        <rosparam file="$(find line_follower)/config/line_detector_config.yaml" />
+        <node name="line_detector_node" pkg="line_follower" type="line_detector_node.py" output="screen" />
+    </group>
+
+   <include file="$(find video_stream_opencv)/launch/camera.launch" >
+        <arg name="camera_name" value="camera" />
+        <arg name="video_stream_provider" value="$(find line_follower)/assets/test.mov" />
+        <arg name="set_camera_fps" value="30"/>
+        <arg name="buffer_queue_size" value="100" />
+        <arg name="fps" value="30" />
+        <arg name="frame_id" value="webcam" />
+        <arg name="camera_info_url" value="" />
+        <arg name="flip_horizontal" value="false" />
+        <arg name="flip_vertical" value="true" />
+        <arg name="visualize" value="false" />
+        <arg name="loop_videofile" value="true" />
+   </include>
+
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find line_follower)/rviz/line_follower.rviz" />
+</launch>

@@ -49,11 +49,13 @@ The control data is sent over a serial connection to an Arduino Pro Micro, which
 To run this project, you must have a ROS Noetic installation setup on a Raspberry Pi. This repository should be checked out into a Catkin workspace. For more information, see the [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials).
 
 You must also have the following dependencies installed: 
-- Python 3 (`sudo apt install python3.8`)
-- OpenCV (`pip install opencv-python && sudo apt install python3-pip`)
+- Python 3 (`sudo apt install python3.8 && sudo apt install python3-pip`)
+- OpenCV (`pip install opencv-python`)
+- CvBridge (`sudo apt install ros-noetic-cv-bridge`)
 - PySerial (`pip install pyserial`)
 - rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
 - robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
+- video_stream_opencv (`sudo apt install ros-noetic-video-stream-opencv`)
 - raspicam_node (See https://github.com/UbiquityRobotics/raspicam_node for build/install instructions)
 
 ### Starting the Project
