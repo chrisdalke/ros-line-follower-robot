@@ -100,4 +100,4 @@ class LineDetector:
 if __name__ =='__main__':
     rospy.init_node('line_detector')
     line_detector = LineDetector()
-    line_detector.run()
+    rospy.spin()

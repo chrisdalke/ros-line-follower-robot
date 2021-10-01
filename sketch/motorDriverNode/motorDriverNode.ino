@@ -116,6 +116,4 @@ void loop() {
   if (millis() - lastMsg > 1000) {
     targetSpeed = 0.0;
   }
-
-  delay(10);
 }
