@@ -105,6 +105,7 @@ sudo systemctl disable linefollower
 ### Topics
 
 - `/camera/raspicam_node/image`: An image from the Raspberry Pi camera.
+- `/camera/raspicam_node/image`: A mockup video published on a loop, used to test the CV pipeline.
 - `/line_follower/processed_image`: The processed image: threshold, reverse perspective transform.
-- `/command/speed`: A commanded speed for the Arduino to achieve.
-- `/command/direction`: A commanded direction for the Arduino to achieve.
+- `/motor_driver/speed`: A commanded speed for the Arduino to achieve.
+- `/motor_driver/direction`: A commanded direction for the Arduino to achieve.
