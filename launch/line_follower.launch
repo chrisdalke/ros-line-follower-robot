@@ -11,8 +11,6 @@
         <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" args="/dev/ttyACM0" />
     </group>
 
-    <group ns="camera">
-        <include file="$(find raspicam_node)/launch/camerav2_410x308_30fps.launch" />
-        <rosparam file="$(find line_follower)/config/rpi_camera_config.yaml" />
-    </group>
+    <rosparam file="$(find line_follower)/config/rpi_camera_config.yaml" />
+    <include file="$(find raspicam_node)/launch/camerav2_410x308_30fps.launch" />  
 </launch>

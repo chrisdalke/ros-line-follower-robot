@@ -53,6 +53,7 @@ You must also have the following dependencies installed:
 - OpenCV (`pip install opencv-python`)
 - CvBridge (`sudo apt install ros-noetic-cv-bridge`)
 - PySerial (`pip install pyserial`)
+- numpy (`pip install numpy`)
 - rosserial_python (`sudo apt install ros-noetic-rosserial-python`)
 - robot_upstart (`sudo apt install ros-noetic-robot-upstart`)
 - video_stream_opencv (`sudo apt install ros-noetic-video-stream-opencv`)

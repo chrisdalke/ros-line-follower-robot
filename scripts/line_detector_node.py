@@ -3,6 +3,7 @@ import sys
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Float32
 
 class LineDetector:
@@ -10,19 +11,29 @@ class LineDetector:
         print("Initializing line detector node")
         # read rate config
         self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector")) 
-        self.image_sub_rpi = rospy.Subscriber("/camera/raspicam_node/image", Image, self.image_callback)
-        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback)
+        self.image_sub_rpi = rospy.Subscriber("/raspicam_node/image", CompressedImage, self.image_callback_compressed)
+        self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback_raw)
         self.image_pub = rospy.Publisher("processed_image", Image)
         self.speed_pub = rospy.Publisher('/motor_driver/speed', Float32)
         self.dir_pub = rospy.Publisher('/motor_driver/direction', Float32)
         self.bridge = CvBridge()
         self.line_offset = 0
 
-    def image_callback(self, msg):
+    def image_callback_raw(self, msg):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "passthrough")
             self.process_image(cv_image)
-        except:
+        except Exception as e:
+            rospy.logerr(e)
+            rospy.logerr("CvBridge Error, skipped image frame!")
+
+    def image_callback_compressed(self, msg):
+        try:
+            np_arr = np.fromstring(msg.data, np.uint8)
+            image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+            self.process_image(image_np)
+        except Exception as e:
+            rospy.logerr(e)
             rospy.logerr("CvBridge Error, skipped image frame!")
 
     def process_image(self, cv_image):
