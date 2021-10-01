@@ -50,10 +50,10 @@ class LineDetector:
         cv_image = cv2.GaussianBlur(cv_image, (7, 7), 0)
 
         # Threshold the image
-        (T, threshold_image) = cv2.threshold(cv_image, 200, 255, cv2.THRESH_BINARY)
+        (T, threshold_image) = cv2.threshold(cv_image, 180, 255, cv2.THRESH_BINARY)
 
         # Overlay black box on top of image
-        threshold_image = cv2.rectangle(threshold_image, (0, 200), (256, 200), (0, 0, 0), -1)
+        cv2.rectangle(threshold_image, (0, 0), (256, 128), (0,0,0), -1)
 
         # Get center of the thresholded image
         M = cv2.moments(threshold_image)
@@ -71,7 +71,8 @@ class LineDetector:
         # Change from grayscale
         threshold_image = cv2.cvtColor(threshold_image, cv2.COLOR_GRAY2RGB)
 
-        # Draw some debugging info
+        # Overlay black box on top of image
+        cv2.rectangle(threshold_image, (0, 200), (256, 200), (255, 255, 255), -1)
         
         #Center of bottom section
         threshold_image = cv2.circle(threshold_image, (cX, cY), 5, (0, 255, 0), -1)
