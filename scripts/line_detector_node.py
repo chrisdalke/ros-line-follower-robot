@@ -13,7 +13,7 @@ class LineDetector:
         print("Initializing line detector node")
         # read rate config
         self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector")) 
-        self.speed = rospy.Rate(rospy.get_param("speed")) 
+        self.speed = rospy.get_param("speed")
         self.image_sub_rpi = rospy.Subscriber("/raspicam_node/image/compressed", CompressedImage, self.image_callback_compressed)
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback_raw)
         self.image_pub = rospy.Publisher("processed_image", Image)
