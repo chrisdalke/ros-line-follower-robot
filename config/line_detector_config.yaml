@@ -1,1 +1,2 @@
-speed: 0.5
+speed: 1.0
+steering_multiplier: 0.5
