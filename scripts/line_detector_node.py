@@ -89,11 +89,7 @@ class LineDetector:
         self.image_pub.publish(image_message)
 
         # Output the control speed / direction
-<<<<<<< HEAD
         self.speed_pub.publish(self.speed)
-=======
-        self.speed_pub.publish(0.5)
->>>>>>> 032afd9f8e400188e2127930ff985f7f741c5eed
         self.dir_pub.publish(self.line_offset)
 
     def run(self):
