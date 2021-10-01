@@ -15,6 +15,7 @@ class LineDetector:
         self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector")) 
         self.speed = rospy.get_param("speed")
         self.steer_multiplier = rospy.get_param("steering_multiplier")
+        self.steer_slowdown_amount = rospy.get_param("steering_slowdown")
         self.image_sub_rpi = rospy.Subscriber("/raspicam_node/image/compressed", CompressedImage, self.image_callback_compressed)
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback_raw)
         self.image_pub = rospy.Publisher("processed_image", Image)
@@ -92,7 +93,7 @@ class LineDetector:
 
         # Output the control speed / direction
         self.dir_target = self.line_offset * self.steer_multiplier
-        self.dir_slowdown = 1.0 - (abs(self.dir_target) * 0.75)
+        self.dir_slowdown = 1.0 - (abs(self.dir_target) * self.steer_slowdown_amount)
         self.speed_pub.publish(self.speed * self.dir_slowdown)
         self.dir_pub.publish(self.dir_target)
 
@@ -103,4 +104,5 @@ class LineDetector:
 if __name__ =='__main__':
     rospy.init_node('line_detector')
     line_detector = LineDetector()
-    line_detector.run()
+    #line_detector.run()
+    rospy.spin()
