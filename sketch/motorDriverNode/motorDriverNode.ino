@@ -5,6 +5,7 @@ int rightMotorEnablePin = 6;
 int rightMotorDirPin1 = 8;
 int rightMotorDirPin2 = 7;
 unsigned long lastMsg = 0;
+unsigned long lastCooldown = 0;
 
 bool hasTarget = false;
 float targetSpeed = 0;
@@ -97,6 +98,18 @@ void loop() {
   }
   leftSpeed *= targetSpeed;
   rightSpeed *= targetSpeed;
+
+  // Write the motor values and then immediately do a cooldown for a while
+  /*if (millis() - lastCooldown < 200) {
+    writeLeftMotor(leftSpeed);
+    writeRightMotor(rightSpeed * -1.0);
+  } else {
+    writeLeftMotor(0);
+    writeRightMotor(0);
+  }
+  if (millis() - lastCooldown > 2000) {
+    lastCooldown = millis();
+  }*/
   writeLeftMotor(leftSpeed);
   writeRightMotor(rightSpeed * -1.0);
 
