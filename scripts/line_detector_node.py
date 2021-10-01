@@ -1,6 +1,8 @@
 import rospy
 import sys
 import cv2
+import traceback
+import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CompressedImage
@@ -10,8 +12,8 @@ class LineDetector:
     def __init__(self):
         print("Initializing line detector node")
         # read rate config
-        self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector")) 
-        self.image_sub_rpi = rospy.Subscriber("/raspicam_node/image", CompressedImage, self.image_callback_compressed)
+        self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector"))
+        self.image_sub_rpi = rospy.Subscriber("/raspicam_node/image/compressed", CompressedImage, self.image_callback_compressed)
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback_raw)
         self.image_pub = rospy.Publisher("processed_image", Image)
         self.speed_pub = rospy.Publisher('/motor_driver/speed', Float32)
@@ -24,17 +26,18 @@ class LineDetector:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "passthrough")
             self.process_image(cv_image)
         except Exception as e:
+            traceback.print_exc()
             rospy.logerr(e)
             rospy.logerr("CvBridge Error, skipped image frame!")
 
     def image_callback_compressed(self, msg):
         try:
             np_arr = np.fromstring(msg.data, np.uint8)
-            image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+            image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
             self.process_image(image_np)
         except Exception as e:
             rospy.logerr(e)
-            rospy.logerr("CvBridge Error, skipped image frame!")
+            rospy.logerr("skipped processed image frame!")
 
     def process_image(self, cv_image):
         # Downscale to 256x256
@@ -54,8 +57,11 @@ class LineDetector:
         M = cv2.moments(threshold_image)
 
         # calculate x,y coordinate of center
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
+        cX = 128
+        cY = 128
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
 
         # Compute an offset in [-1, 1] coordinates to convert to steering
         self.line_offset = (cX - 128.0) / 128.0
