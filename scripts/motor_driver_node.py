@@ -23,7 +23,7 @@ class MotorDriver:
 
     def open_port(self):
         try:
-            self.port = serial.Serial(self.port_name)
+            self.port = serial.Serial(self.port_name, baudrate=115200)
             self.port_open = True
         except:
             rospy.logerr('Unable to open port:' + self.port_name)
@@ -41,8 +41,8 @@ class MotorDriver:
 
     def send_command(self):
         if self.port_open:
-            speedStr = 'wss.speed=' + str(self.speed_command) + '\n'
-            dirStr = 'wss.dir=' + str(self.dir_command) + '\n'
+            speedStr = 's=' + str(self.speed_command) + '\n'
+            dirStr = 'd=' + str(self.dir_command) + '\n'
             self.port.write(speedStr.encode())
             self.port.write(dirStr.encode())
             print('Sending speed = {}, dir = {}'.format(self.speed_command, self.dir_command))

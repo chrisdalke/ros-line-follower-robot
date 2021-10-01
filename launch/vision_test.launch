@@ -6,6 +6,11 @@
         <node name="line_detector_node" pkg="line_follower" type="line_detector_node.py" output="screen" />
     </group>
 
+    <group ns="motor_driver">
+        <rosparam file="$(find line_follower)/config/motor_driver_config.yaml" />
+        <node name="motor_driver_node" pkg="line_follower" type="motor_driver_node.py" output="screen" args="/dev/ttyACM0" />
+    </group>
+
    <include file="$(find video_stream_opencv)/launch/camera.launch" >
         <arg name="camera_name" value="camera" />
         <arg name="video_stream_provider" value="$(find line_follower)/assets/test.mov" />

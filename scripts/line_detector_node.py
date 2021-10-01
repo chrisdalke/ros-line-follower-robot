@@ -3,6 +3,7 @@ import sys
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
+from std_msgs.msg import Float32
 
 class LineDetector:
     def __init__(self):
@@ -11,6 +12,8 @@ class LineDetector:
         self.rate = rospy.Rate(rospy.get_param("/rate/lineDetector")) 
         self.image_sub = rospy.Subscriber("/camera/image_raw", Image, self.image_callback)
         self.image_pub = rospy.Publisher("processed_image", Image)
+        self.speed_pub = rospy.Publisher('/motor_driver/speed', Float32)
+        self.dir_pub = rospy.Publisher('/motor_driver/direction', Float32)
         self.bridge = CvBridge()
         self.line_offset = 0
 
@@ -65,6 +68,10 @@ class LineDetector:
         # Output the processed message
         image_message = self.bridge.cv2_to_imgmsg(threshold_image, "passthrough")
         self.image_pub.publish(image_message)
+
+        # Output the control speed / direction
+        self.speed_pub.publish(1.0)
+        self.dir_pub.publish(self.line_offset)
 
     def run(self):
         while not rospy.is_shutdown():

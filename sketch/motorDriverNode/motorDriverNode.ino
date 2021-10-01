@@ -4,6 +4,7 @@ int leftMotorDirPin2 = 10;
 int rightMotorEnablePin = 6;
 int rightMotorDirPin1 = 8;
 int rightMotorDirPin2 = 7;
+unsigned long lastMsg = 0;
 
 bool hasTarget = false;
 float targetSpeed = 0;
@@ -13,8 +14,8 @@ float tempDirRad = 0;
 const byte numChars = 64;
 char receivedChars[numChars];
 
-String speedKey = "wss.speed=";
-String dirKey = "wss.dir=";
+String speedKey = "s=";
+String dirKey = "d=";
 
 
 void setup() {
@@ -72,9 +73,11 @@ void loop() {
     String keyValue =String(receivedChars);
     if (keyValue.startsWith(speedKey)) {
       targetSpeed = keyValue.substring(speedKey.length()).toFloat();
+      lastMsg = millis();
     }
     if (keyValue.startsWith(dirKey)) {
       targetDirection = keyValue.substring(dirKey.length()).toFloat();
+      lastMsg = millis();
     }
   }
         
@@ -92,14 +95,14 @@ void loop() {
     leftSpeed = 1.0;
     rightSpeed = cos(dirAngleRad * 2.0);
   }
-  Serial.print(leftSpeed);
-  Serial.print(" ");
-  Serial.println(rightSpeed);
-  
   leftSpeed *= targetSpeed;
   rightSpeed *= targetSpeed;
   writeLeftMotor(leftSpeed);
   writeRightMotor(rightSpeed * -1.0);
+
+  if (millis() - lastMsg > 1000) {
+    targetSpeed = 0.0;
+  }
 
   delay(10);
 }
