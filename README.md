@@ -9,6 +9,8 @@ differential steering.
 I built this small project to sharpen my ROS and OpenCV skills. Your mileage may vary; the OpenCV code
 likely will not work in a different lighting environment. The perception system won't generalize since it relies on the line being significantly _lighter_ than the floor, which works in my workspace.
 
+Check out the robot in action at https://www.youtube.com/watch?v=0DcV46YkHR8.
+
 ## Architecture
 
 ```
